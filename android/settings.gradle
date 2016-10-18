@@ -1,0 +1,3 @@
+rootProject.name = 'DropletManager'
+
+include ':app'
