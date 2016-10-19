@@ -1,14 +1,14 @@
-var DO = require('do-wrapper')
-var client = new DO('process.env.DO_TOKEN', 10)
+const DO = require('do-wrapper');
 
-module.exports = {
-  getAccountDetails: getAccountDetails,
+const client = new DO(process.env.DO_TOKEN, 10);
+
+function getAccountDetails() {
+  return client.account().then(data => data.body.account);
 }
 
-function getAccountDetails (callback) {
-  client.account((err, res, body) => {
-    if (err) return callback(err)
+const API = {
+  client,
+  getAccountDetails,
+};
 
-    return callback(null, body)
-  })
-}
+export default API;
