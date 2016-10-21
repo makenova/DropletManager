@@ -38,6 +38,8 @@ export default class DropletManager extends Component {
   componentDidMount() {
     API.getAccountDetails()
       .then(account => this.setState({ account }))
+      .then(() => API.client.accountGetActions())
+      .then((response) => console.log('obj', response.body))
       .catch(() => this.setState({ error: 'Could not get account details' }));
   }
 
