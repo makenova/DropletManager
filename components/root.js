@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 import API from '../api';
+import DropletList from './DropletList';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,11 +20,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
 });
 
 export default class DropletManager extends Component {
@@ -31,6 +27,7 @@ export default class DropletManager extends Component {
     super();
     this.state = {
       account: {},
+      droplets: [],
       error: '',
     };
   }
@@ -38,9 +35,10 @@ export default class DropletManager extends Component {
   componentDidMount() {
     API.getAccountDetails()
       .then(account => this.setState({ account }))
-      .then(() => API.client.accountGetActions())
-      .then((response) => console.log('obj', response.body))
-      .catch(() => this.setState({ error: 'Could not get account details' }));
+      .catch(() => this.setState({ error: 'Could not get account details' }))
+      .then(() => API.client.dropletsGetAll())
+      .then(response => this.setState({ droplets: response.body.droplets }))
+      .catch(() => this.setState({ error: 'Could not get droplets' }));
   }
 
   render() {
@@ -52,6 +50,8 @@ export default class DropletManager extends Component {
         <Text style={styles.welcome}>
           email: {this.state.account.email || '...'}
         </Text>
+        <DropletList droplets={this.state.droplets} />
+        <Text>{this.state.error}</Text>
       </View>
     );
   }
