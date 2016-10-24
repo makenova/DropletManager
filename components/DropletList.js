@@ -1,5 +1,16 @@
 import React, { PropTypes } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // alignItems: 'center',
+    margin: 10,
+  },
+  listItem: {
+    // flex: 1,
+  },
+});
 
 const DropletNetworks = ({ networks }) => {
   const v4 = networks.v4.map(v4network => v4network.ip_address);
@@ -22,13 +33,16 @@ DropletNetworks.propTypes = {
   }),
 };
 
-const DropletListItem = ({ droplet }) =>
-  <View>
+const DropletListItem = ({ droplet, showDroplet }) =>
+  <TouchableOpacity
+    style={styles.listItem}
+    onPress={() => showDroplet(droplet)}
+  >
     <Text>{droplet.name}</Text>
     <Text>{droplet.status}</Text>
     <DropletNetworks networks={droplet.networks} />
     <Text>{droplet.region.slug}</Text>
-  </View>;
+  </TouchableOpacity>;
 
 DropletListItem.propTypes = {
   droplet: PropTypes.shape({
@@ -39,20 +53,25 @@ DropletListItem.propTypes = {
       slug: PropTypes.string,
     }),
   }),
+  showDroplet: PropTypes.func,
 };
 
-const DropletList = ({ droplets }) =>
-  <View>
-    <Text>Droplets:</Text>
+const DropletList = ({ droplets, showDroplet }) =>
+  <View style={styles.container}>
     {
       droplets.map((droplet, key) =>
-        <DropletListItem droplet={droplet} key={key} />
+        <DropletListItem
+          droplet={droplet}
+          key={key}
+          showDroplet={showDroplet}
+        />
       )
     }
   </View>;
 
 DropletList.propTypes = {
   droplets: PropTypes.arrayOf(PropTypes.object).isRequired,
+  showDroplet: PropTypes.func.isRequired,
 };
 
 export default DropletList;

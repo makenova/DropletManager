@@ -7,7 +7,9 @@
     ],
     "rules": {
       "react/jsx-filename-extension": [1, {"extensions": [".js", ".jsx"] }],
-      "react/no-string-refs": "off"
+      "react/no-string-refs": "off",
+      "react/forbid-prop-types": "off",
+      "react/no-unused-prop-types": [1, {"skipShapeProps": true}]
     },
     "env": {
       "browser": true,

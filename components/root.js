@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,8 +11,8 @@ import DropletList from './DropletList';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 60,
+    // alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
   welcome: {
@@ -30,6 +30,8 @@ export default class DropletManager extends Component {
       droplets: [],
       error: '',
     };
+
+    this.showDroplet = this.showDroplet.bind(this);
   }
 
   componentDidMount() {
@@ -41,18 +43,29 @@ export default class DropletManager extends Component {
       .catch(() => this.setState({ error: 'Could not get droplets' }));
   }
 
+  showDroplet(droplet) {
+    this.props.navigator.push({
+      title: 'droplet',
+      droplet,
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Droplet Manager
-        </Text>
-        <Text style={styles.welcome}>
           email: {this.state.account.email || '...'}
         </Text>
-        <DropletList droplets={this.state.droplets} />
+        <DropletList
+          droplets={this.state.droplets}
+          showDroplet={this.showDroplet}
+        />
         <Text>{this.state.error}</Text>
       </View>
     );
   }
 }
+
+DropletManager.propTypes = {
+  navigator: PropTypes.object.isRequired,
+};
