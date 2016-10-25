@@ -7,13 +7,13 @@ import {
 
 import API from '../api';
 import DropletList from './DropletList';
+import { color } from '../sharedStyles';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 60,
-    // alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: color.background,
   },
   welcome: {
     fontSize: 20,
@@ -29,6 +29,7 @@ export default class DropletManager extends Component {
       account: {},
       droplets: [],
       error: '',
+      loadingData: true,
     };
 
     this.showDroplet = this.showDroplet.bind(this);
@@ -39,7 +40,10 @@ export default class DropletManager extends Component {
       .then(account => this.setState({ account }))
       .catch(() => this.setState({ error: 'Could not get account details' }))
       .then(() => API.client.dropletsGetAll())
-      .then(response => this.setState({ droplets: response.body.droplets }))
+      .then(response => this.setState({
+        droplets: response.body.droplets,
+        loadingData: false,
+      }))
       .catch(() => this.setState({ error: 'Could not get droplets' }));
   }
 
@@ -51,6 +55,7 @@ export default class DropletManager extends Component {
   }
 
   render() {
+    if (this.state.loadingData) return null;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>

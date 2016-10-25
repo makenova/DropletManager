@@ -1,14 +1,29 @@
-import React, { PropTypes } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { Component, PropTypes } from 'react';
+import {
+  ListView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import { color } from '../sharedStyles';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: color.background,
     // alignItems: 'center',
     margin: 10,
   },
   listItem: {
-    // flex: 1,
+    flex: 1,
+    backgroundColor: color.background,
+    marginVertical: 5,
+    paddingVertical: 5,
+  },
+  listItemHostName: {
+    fontSize: 20,
   },
 });
 
@@ -33,15 +48,58 @@ DropletNetworks.propTypes = {
   }),
 };
 
+const DropletActivityIndicator = ({ status }) => {
+  let statusColor = '';
+
+  switch (status) {
+    case 'new':
+      statusColor = color.webSafeBlue;
+      break;
+    case 'active':
+      statusColor = color.successGreen;
+      break;
+    case 'off':
+      statusColor = color.alertRed;
+      break;
+    case 'archive':
+      statusColor = color.neutralYellow;
+      break;
+    default:
+      statusColor = color.neutralGrey;
+      break;
+  }
+
+  return (
+    <View
+      style={{
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: statusColor,
+      }}
+    />
+  );
+};
+
+DropletActivityIndicator.propTypes = {
+  status: PropTypes.string.isRequired,
+};
+
 const DropletListItem = ({ droplet, showDroplet }) =>
   <TouchableOpacity
     style={styles.listItem}
     onPress={() => showDroplet(droplet)}
   >
-    <Text>{droplet.name}</Text>
-    <Text>{droplet.status}</Text>
-    <DropletNetworks networks={droplet.networks} />
-    <Text>{droplet.region.slug}</Text>
+    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'gray' }}>
+      <View style={{ flex: 2, marginVertical: 5 }}>
+        <Text style={styles.listItemHostName}>{droplet.name}</Text>
+        <DropletNetworks networks={droplet.networks} />
+      </View>
+      <View style={{ flex: 1, marginVertical: 5 }}>
+        <DropletActivityIndicator status={droplet.status} />
+        <Text>{droplet.region.slug}</Text>
+      </View>
+    </View>
   </TouchableOpacity>;
 
 DropletListItem.propTypes = {
@@ -56,22 +114,34 @@ DropletListItem.propTypes = {
   showDroplet: PropTypes.func,
 };
 
-const DropletList = ({ droplets, showDroplet }) =>
-  <View style={styles.container}>
-    {
-      droplets.map((droplet, key) =>
-        <DropletListItem
-          droplet={droplet}
-          key={key}
-          showDroplet={showDroplet}
+export default class DropletList extends Component {
+  constructor(props) {
+    super(props);
+
+    const ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2,
+    });
+    this.state = { dataSource: ds.cloneWithRows(props.droplets) };
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={rowData =>
+            <DropletListItem
+              droplet={rowData}
+              showDroplet={this.props.showDroplet}
+            />
+          }
         />
-      )
-    }
-  </View>;
+      </View>
+    );
+  }
+}
 
 DropletList.propTypes = {
   droplets: PropTypes.arrayOf(PropTypes.object).isRequired,
   showDroplet: PropTypes.func.isRequired,
 };
-
-export default DropletList;

@@ -6,6 +6,11 @@ export const color = {
   background: '#FFFFFF',
   navBarBackground: '#008BCF',
   whiteFont: '#FFFFFF',
+  webSafeBlue: '#0069FF',
+  successGreen: '#28CB75',
+  alertRed: '#ED4F32',
+  neutralYellow: '#FAEE6C',
+  neutralGrey: '#F3F5F7',
 };
 
 export const navBarStyles = StyleSheet.create({

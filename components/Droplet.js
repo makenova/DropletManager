@@ -17,7 +17,14 @@ const Droplet = ({ droplet }) =>
   </View>;
 
 Droplet.propTypes = {
-  droplet: PropTypes.object,
+  droplet: PropTypes.shape({
+    name: PropTypes.string,
+    status: PropTypes.string,
+    region: PropTypes.shape({
+      name: PropTypes.string,
+      slug: PropTypes.string,
+    }),
+  }),
 };
 
 export default Droplet;
