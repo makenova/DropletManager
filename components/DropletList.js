@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: color.background,
-    // alignItems: 'center',
     margin: 10,
   },
   listItem: {
@@ -22,8 +21,28 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     paddingVertical: 5,
   },
+  listItemContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+  },
+  listItemLargeBox: {
+    flex: 4,
+    paddingVertical: 5,
+  },
+  listItemSmallBox: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingVertical: 5,
+  },
   listItemHostName: {
-    fontSize: 20,
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  statusButton: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
   },
 });
 
@@ -70,14 +89,7 @@ const DropletActivityIndicator = ({ status }) => {
   }
 
   return (
-    <View
-      style={{
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: statusColor,
-      }}
-    />
+    <View style={[styles.statusButton, { backgroundColor: statusColor }]} />
   );
 };
 
@@ -90,14 +102,14 @@ const DropletListItem = ({ droplet, showDroplet }) =>
     style={styles.listItem}
     onPress={() => showDroplet(droplet)}
   >
-    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'gray' }}>
-      <View style={{ flex: 2, marginVertical: 5 }}>
+    <View style={styles.listItemContainer}>
+      <View style={styles.listItemLargeBox}>
         <Text style={styles.listItemHostName}>{droplet.name}</Text>
         <DropletNetworks networks={droplet.networks} />
-      </View>
-      <View style={{ flex: 1, marginVertical: 5 }}>
-        <DropletActivityIndicator status={droplet.status} />
         <Text>{droplet.region.slug}</Text>
+      </View>
+      <View style={styles.listItemSmallBox}>
+        <DropletActivityIndicator status={droplet.status} />
       </View>
     </View>
   </TouchableOpacity>;
