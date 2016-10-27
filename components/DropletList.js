@@ -67,7 +67,7 @@ DropletNetworks.propTypes = {
   }),
 };
 
-const DropletActivityIndicator = ({ status }) => {
+const DropletActivityIndicator = ({ status, locked }) => {
   let statusColor = '';
 
   switch (status) {
@@ -87,14 +87,18 @@ const DropletActivityIndicator = ({ status }) => {
       statusColor = color.neutralGrey;
       break;
   }
-
+  // TODO: Use vector icons for lock
   return (
-    <View style={[styles.statusButton, { backgroundColor: statusColor }]} />
+    <View>
+      <View style={[styles.statusButton, { backgroundColor: statusColor }]} />
+      {locked ? <Text>locked vector</Text> : null}
+    </View>
   );
 };
 
 DropletActivityIndicator.propTypes = {
   status: PropTypes.string.isRequired,
+  locked: PropTypes.bool.isRequired,
 };
 
 const DropletListItem = ({ droplet, showDroplet }) =>
@@ -106,10 +110,16 @@ const DropletListItem = ({ droplet, showDroplet }) =>
       <View style={styles.listItemLargeBox}>
         <Text style={styles.listItemHostName}>{droplet.name}</Text>
         <DropletNetworks networks={droplet.networks} />
-        <Text>{droplet.region.slug}</Text>
+        <Text>
+          {droplet.size_slug.toUpperCase()} / {droplet.disk}GB /
+          {` ${droplet.region.slug.toUpperCase()}`}
+        </Text>
       </View>
       <View style={styles.listItemSmallBox}>
-        <DropletActivityIndicator status={droplet.status} />
+        <DropletActivityIndicator
+          status={droplet.status}
+          locked={droplet.locked}
+        />
       </View>
     </View>
   </TouchableOpacity>;
@@ -118,6 +128,9 @@ DropletListItem.propTypes = {
   droplet: PropTypes.shape({
     name: PropTypes.string,
     status: PropTypes.string,
+    disk: PropTypes.number,
+    size_slug: PropTypes.string,
+    locked: PropTypes.bool,
     region: PropTypes.shape({
       name: PropTypes.string,
       slug: PropTypes.string,

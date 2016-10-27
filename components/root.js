@@ -26,20 +26,16 @@ export default class DropletManager extends Component {
   constructor() {
     super();
     this.state = {
-      account: {},
+      loadingData: true,
       droplets: [],
       error: '',
-      loadingData: true,
     };
 
     this.showDroplet = this.showDroplet.bind(this);
   }
 
   componentDidMount() {
-    API.getAccountDetails()
-      .then(account => this.setState({ account }))
-      .catch(() => this.setState({ error: 'Could not get account details' }))
-      .then(() => API.client.dropletsGetAll())
+    API.client.dropletsGetAll()
       .then(response => this.setState({
         droplets: response.body.droplets,
         loadingData: false,
@@ -58,9 +54,6 @@ export default class DropletManager extends Component {
     if (this.state.loadingData) return null;
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          email: {this.state.account.email || '...'}
-        </Text>
         <DropletList
           droplets={this.state.droplets}
           showDroplet={this.showDroplet}
