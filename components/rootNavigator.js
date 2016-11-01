@@ -1,14 +1,34 @@
 import React, { Component } from 'react';
 import {
-  Text,
+  BackAndroid,
   Navigator,
+  Platform,
+  Text,
 } from 'react-native';
 
 import Root from './root';
 import DropletDetail from './Droplet';
 import { navBarStyles } from '../sharedStyles';
+import LeftButton from './LeftButton';
 
 export default class RootNavigator extends Component {
+  componentDidMount() {
+    BackAndroid.addEventListener('hardwareBackPress', () => {
+      const nav = this.refs.nav;
+      const routes = nav.getCurrentRoutes();
+
+      if (routes.length > 1) {
+        nav.pop();
+        return true;
+      }
+      return false;
+    });
+  }
+
+  componentWillUnmount() {
+    BackAndroid.removeEventListener('hardwareBackPress');
+  }
+
   renderScene(route, navigator) {
     switch (route.title) {
       case 'droplet':
@@ -30,15 +50,8 @@ export default class RootNavigator extends Component {
       },
       RightButton: () => null,
       LeftButton: (route, navigator, index) => {
-        if (index !== 0) {
-          return (
-            <Text
-              style={[navBarStyles.button, navBarStyles.rightButton]}
-              onPress={navigator.pop}
-            >
-              Back
-            </Text>
-          );
+        if (index !== 0 && Platform.OS === 'ios') {
+          return <LeftButton action={navigator.pop} text="Back" />;
         }
         return null;
       },
@@ -46,6 +59,7 @@ export default class RootNavigator extends Component {
 
     return (
       <Navigator
+        ref="nav"
         initialRoute={{ title: 'root', index: 0 }}
         renderScene={this.renderScene}
         navigationBar={
